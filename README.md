@@ -24,13 +24,15 @@ Solución inteligente de automatización de correos electrónicos corporativos u
 
 ```
 tarea academica 2/
-├── .env.example              # Variables de entorno requeridas
-├── requirements.txt          # Dependencias oficiales fijadas
-├── schemas.py                # Modelos Pydantic v2 y declaraciones de herramientas
-├── services.py               # Servicios mock en memoria para Jira, Calendar y CRM
-├── assistant_core.py         # Orquestador del Asistente con Gemini y Function Calling
-├── app.py                    # Aplicación web Streamlit con panel HITL
-└── README.md                 # Documentación técnica
+├── .env.example                 # Variables de entorno y plantilla de configuración
+├── .env                         # Variables de entorno locales (Gemini, Jira, Calendar)
+├── requirements.txt             # Dependencias oficiales del sistema
+├── schemas.py                   # Modelos Pydantic v2 y declaraciones de herramientas
+├── services.py                  # Integraciones reales (Jira Cloud, Google Calendar) y Mocks
+├── assistant_core.py            # Orquestador con SYSTEM_PROMPT (6 componentes) y Gemini 2.0
+├── app.py                       # Aplicación web Streamlit moderna y amigable con HITL
+├── GUIA_CREDENCIALES_Y_APIS.md  # Manual paso a paso para obtener APIs y credenciales
+└── README.md                    # Documentación técnica del proyecto
 ```
 
 ---
@@ -47,17 +49,24 @@ cd "c:\Users\CyberMax\OneDrive\Documentos\Herramientas TI Curso\tarea academica 
 py -3.12 -m pip install -r requirements.txt
 ```
 
-### 3. Configurar la clave de API de Gemini:
-Crea un archivo `.env` basado en `.env.example`:
-```bash
-copy .env.example .env
-```
-Edita `.env` con tu clave de [Google AI Studio](https://aistudio.google.com/app/apikey):
+### 3. Configurar variables de entorno en `.env`:
+Copia la plantilla y edita tu archivo `.env`:
 ```ini
-GEMINI_API_KEY=tu_api_key_aqui
-GEMINI_MODEL=gemini-1.5-flash
+# GOOGLE GEMINI API (Cargada obligatoriamente desde .env)
+GEMINI_API_KEY=AIzaSy...
+GEMINI_MODEL=gemini-2.0-flash
+
+# ATLASSIAN JIRA CLOUD (Conexión Real con Fallback automático)
+JIRA_URL=https://tu-organizacion.atlassian.net
+JIRA_EMAIL=tu_correo@utp.edu.pe
+JIRA_API_TOKEN=tu_api_token_aqui
+JIRA_PROJECT_KEY=PAYMOD
+
+# GOOGLE CALENDAR API (Conexión Real con Service Account)
+GOOGLE_CALENDAR_ID=primary
+GOOGLE_SERVICE_ACCOUNT_FILE=service_account.json
 ```
-*(Nota: La aplicación también permite ingresar o probar la API Key directamente en el panel lateral de Streamlit, e incluye modo de fallback simulado si aún no cuentas con una).*
+*(Para instrucciones detalladas de cómo generar cada una, consulta [`GUIA_CREDENCIALES_Y_APIS.md`](./GUIA_CREDENCIALES_Y_APIS.md) o la pestaña **📖 Guía de Credenciales** dentro de la app).*
 
 ---
 
@@ -72,14 +81,26 @@ La interfaz se abrirá en tu navegador en `http://localhost:8501`.
 
 ---
 
+## 🧠 Arquitectura del Prompt del Sistema (SYSTEM_PROMPT)
+
+El prompt del Asistente en [`assistant_core.py`](./assistant_core.py) cuenta con los 6 componentes requeridos:
+1. **Rol:** Copiloto Senior de Project Management & Sales Ops en UTPConsult.
+2. **Contexto:** Orquestación entre Jira, Google Calendar y CRM para clientes corporativos.
+3. **Instrucción clara:** Invocación obligatoria de las 3 herramientas, regla de agendamiento temporal por defecto (próximo martes a las 10:00 AM UTC, 45 min) y cero alucinación.
+4. **Formato esperado:** Invocación JSON de herramientas y reporte ejecutivo final en Markdown para el PM.
+5. **Ejemplos (Few-Shot):** Casos estructurados de integración y reporte de bugs con entradas y llamadas esperadas.
+6. **Datos de entrada:** Definición explícita de Remitente, Asunto, Archivo Adjunto y Cuerpo.
+
+---
+
 ## 🧪 Caso de Prueba Oficial (Verificación)
 
 1. En la columna izquierda, selecciona el correo:
-   **⭐ Caso Oficial: Ana Torres (TechCorp - Módulo Pagos)**
+   **⭐ Caso 1 (Oficial): Ana Torres (TechCorp — Módulo de Pagos)**
 2. Haz clic en **"⚡ Procesar con UTP Assistant"**.
 3. Observa en la columna derecha:
    - Los estados del Run: `queued` ➔ `in_progress` ➔ `requires_action` ➔ `completed`.
-   - Las 3 herramientas detectadas e invocadas con sus argumentos JSON.
-   - La tarjeta **HITL**: Haz clic en **"🤝 Confirmar Reunión en Calendar"** y **"🚀 Aprobar Ticket Jira para Sprint"**.
+   - Las 3 herramientas detectadas e invocadas con sus argumentos JSON y tipo de conexión (Real o Simulación Fallback).
+   - La tarjeta **HITL**: Haz clic en **"🤝 Confirmar Reunión en Calendar"** y **"🚀 Aprobar Ticket para Sprint"**.
    - La notificación ejecutiva final generada para el equipo interno.
 4. En la barra lateral izquierda, observa cómo se actualizan en vivo los contadores y registros de **Jira**, **Calendar** y **CRM**.
