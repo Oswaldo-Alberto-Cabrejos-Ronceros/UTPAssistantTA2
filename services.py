@@ -60,7 +60,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Intentar importar librerías de Google Calendar
+# Importación de librerías de Google Calendar
 try:
     from google.oauth2 import service_account
     from googleapiclient.discovery import build as build_google_service
@@ -93,7 +93,7 @@ def _obtener_cliente_google_calendar():
         ""
     ).strip().strip('"').strip("'")
 
-    # Si en GOOGLE_SERVICE_ACCOUNT_FILE pegaron un JSON en vez de una ruta
+    # Detección de contenido JSON directo en variable de archivo
     sa_env_raw = (os.getenv("GOOGLE_SERVICE_ACCOUNT_FILE") or "").strip()
     if sa_env_raw.startswith("{") and sa_env_raw.endswith("}"):
         b64_creds = sa_env_raw
@@ -108,7 +108,7 @@ def _obtener_cliente_google_calendar():
                 raw_json = base64.b64decode(b64_creds).decode("utf-8")
                 creds_dict = json.loads(raw_json)
 
-            # Verificar si es Service Account ("type": "service_account")
+            # Validación de Service Account ("type": "service_account")
             if creds_dict.get("type") == "service_account":
                 creds = service_account.Credentials.from_service_account_info(
                     creds_dict,
@@ -172,16 +172,16 @@ def ejecutar_crear_ticket_jira(
     jira_email = (os.getenv("JIRA_EMAIL") or os.getenv("JIRA_CORREO") or "").strip()
     jira_api_token = (os.getenv("JIRA_API_TOKEN") or os.getenv("JIRA_TOKEN") or "").strip()
 
-    # Si el usuario especificó una clave de proyecto en .env, respetarla siempre
+    # Clave de proyecto definida en variables de entorno
     project_key_env = (os.getenv("JIRA_PROJECT_KEY") or "").strip()
     if project_key_env:
         project_key = project_key_env
 
-    # Si jira_url no empieza con https://, agregar https://
+    # Normalización de prefijo de protocolo HTTPS
     if jira_url and not jira_url.startswith("http://") and not jira_url.startswith("https://"):
         jira_url = f"https://{jira_url}"
 
-    # Verificar si hay credenciales reales completas
+    # Validación de presencia de credenciales completas de Jira
     tiene_credenciales_jira = (
         bool(jira_url) and
         bool(jira_email) and
@@ -200,7 +200,7 @@ def ejecutar_crear_ticket_jira(
                 "Content-Type": "application/json"
             }
 
-            # Normalizar issue_type para Jira Cloud
+            # Normalización de tipo de issue para Jira Cloud
             issue_type_clean = issue_type if issue_type in ["Task", "Story", "Bug", "Epic"] else "Task"
 
             # Formato Atlassian Document Format (ADF) para API v3
@@ -384,7 +384,7 @@ def ejecutar_agendar_google_calendar(
             }
 
             try:
-                # Intentar crear con solicitud de Google Meet
+                # Creación de evento con solicitud de Google Meet
                 evento_creado = cliente_cal.events().insert(
                     calendarId=calendar_id,
                     body=cuerpo_evento,
@@ -392,7 +392,7 @@ def ejecutar_agendar_google_calendar(
                 ).execute()
             except Exception as e_meet:
                 logger.warning(f"No se pudo adjuntar Google Meet nativo ({e_meet}). Creando evento estándar...")
-                # Fallback: crear sin conferenceData si la cuenta personal no lo soporta
+                # Fallback sin conferenceData para compatibilidad con cuentas personales
                 cuerpo_evento.pop("conferenceData", None)
                 cuerpo_evento["description"] = f"{descripcion_completa}\n\n🔗 Enlace de Sesión: {meet_fallback_url}"
                 evento_creado = cliente_cal.events().insert(
@@ -403,7 +403,7 @@ def ejecutar_agendar_google_calendar(
             real_event_id = evento_creado.get("id")
             html_link = evento_creado.get("htmlLink", "")
             
-            # Obtener enlace de Meet si existe
+            # Enlace de Google Meet generado
             meet_link = ""
             conf_data = evento_creado.get("conferenceData", {})
             for ep in conf_data.get("entryPoints", []):
@@ -557,7 +557,7 @@ def confirmar_reunion_calendar(event_id: str) -> bool:
             evento["status"] = "confirmed"
             evento["confirmed_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-            # Si es evento real, intentar parchear en Google Calendar
+            # Actualización en Google Calendar para eventos reales
             if evento.get("is_real"):
                 try:
                     cliente_cal, _ = _obtener_cliente_google_calendar()

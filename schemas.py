@@ -50,7 +50,7 @@ class CRMPipelineStage(str, Enum):
 class CrearTicketJiraSchema(BaseModel):
     project_key: str = Field(
         ...,
-        description="Clave del proyecto en Jira, por ejemplo 'PAYMOD' o 'UTP'."
+        description="Clave del proyecto en Jira, por ejemplo 'UTPCONSULT'."
     )
     summary: str = Field(
         ...,
@@ -187,7 +187,7 @@ TOOLS_CONFIG = [
                 "status": {
                     "type": "string",
                     "enum": ["tentative", "confirmed"],
-                    "description": "Estado del evento ('tentative' para revisión HITL o 'confirmed')."
+                    "description": "Estado del evento ('tentative' para revisión o 'confirmed')."
                 }
             },
             "required": ["summary", "start_time", "end_time", "attendees", "agenda", "status"]

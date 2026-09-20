@@ -17,10 +17,10 @@ from dotenv import load_dotenv
 warnings.filterwarnings("ignore", category=FutureWarning)
 warnings.filterwarnings("ignore", category=UserWarning)
 
-# Cargar variables de entorno
+# Carga de variables de entorno
 load_dotenv()
 
-# Intentar importar google-generativeai
+# Importación condicional del cliente google-generativeai
 try:
     import google.generativeai as genai
     from google.generativeai.types import content_types
@@ -131,11 +131,11 @@ class UTPAssistantManager:
     """
 
     def __init__(self, model_name: Optional[str] = None):
-        # Cargar variables frescas de entorno
+        # Carga de variables de entorno actualizadas
         load_dotenv(override=True)
         self.api_key = os.getenv("GEMINI_API_KEY", "").strip()
         env_model = os.getenv("GEMINI_MODEL", "gemini-3.6-flash").strip()
-        # Si en .env aún tienen gemini-2.0-flash o gemini-2.5-flash (deprecados por Google), usar gemini-3.6-flash
+        # Mapeo de compatibilidad a gemini-3.6-flash
         if env_model in ["gemini-2.0-flash", "gemini-2.5-flash"]:
             env_model = "gemini-3.6-flash"
         self.model_name = model_name or env_model
@@ -242,7 +242,7 @@ class UTPAssistantManager:
             f"agenda la reunión técnica de 45 min en Google Calendar y registra el prospecto en el CRM."
         )
 
-        # Si el cliente no está configurado con API Key real válida, usar fallback inteligente para pruebas
+        # Modo fallback inteligente para pruebas ante ausencia de cliente configurado
         if not self.client_configured:
             logger.info("Ejecutando en Modo Simulado (Sin API Key o API Key no configurada).")
             return self._procesar_correo_simulado(
@@ -250,7 +250,7 @@ class UTPAssistantManager:
             )
 
         try:
-            # Configurar herramientas pasadas a Gemini
+            # Definición de herramientas para Gemini
             herramientas_gemini = [
                 ejecutar_crear_ticket_jira,
                 ejecutar_agendar_google_calendar,
@@ -263,14 +263,14 @@ class UTPAssistantManager:
                 tools=herramientas_gemini
             )
 
-            # Iniciar chat
+            # Sesión de chat con Function Calling
             chat = modelo.start_chat(enable_automatic_function_calling=False)
             respuesta_inicial = chat.send_message(mensaje_correo)
 
             tool_calls_detectados = []
             tool_outputs_ejecutados = []
 
-            # Verificar si el modelo solicitó function calls
+            # Detección de function calls solicitadas por el modelo
             candidato = respuesta_inicial.candidates[0]
             partes_con_funciones = [
                 parte for parte in candidato.content.parts if parte.function_call
@@ -279,12 +279,12 @@ class UTPAssistantManager:
             if partes_con_funciones:
                 historial_estados.append("requires_action")
                 
-                # Ejecutar cada función solicitada
+                # Ejecución secuencial de herramientas solicitadas
                 respuestas_para_gemini = []
                 for parte in partes_con_funciones:
                     fn_call = parte.function_call
                     fn_name = fn_call.name
-                    # Convertir args de Gemini a dict
+                    # Conversión de argumentos a diccionario
                     fn_args = dict(fn_call.args)
 
                     tool_calls_detectados.append({
@@ -308,7 +308,7 @@ class UTPAssistantManager:
                         )
                     )
 
-                # Enviar tool outputs a Gemini para que genere la respuesta final ejecutiva
+                # Envío de resultados de herramientas para respuesta final ejecutiva
                 respuesta_final = chat.send_message(respuestas_para_gemini)
                 mensaje_asistente = respuesta_final.text
             else:
@@ -352,12 +352,12 @@ class UTPAssistantManager:
         """
         historial_estados.append("requires_action")
 
-        # 1. Determinar datos del contacto y empresa
+        # 1. Determinación de datos del contacto y empresa
         full_name = "Ana Torres" if "Ana" in cuerpo or "Ana" in remitente else remitente.split("@")[0].replace(".", " ").title()
         company_name = "TechCorp" if "TechCorp" in cuerpo or "TechCorp" in asunto else "Empresa Prospecto"
         email = remitente
 
-        # 2. Calcular próximo martes a las 10:00 AM
+        # 2. Cálculo del próximo martes a las 10:00 AM
         hoy = datetime.now()
         dias_hasta_martes = (1 - hoy.weekday() + 7) % 7
         if dias_hasta_martes == 0:
@@ -435,7 +435,7 @@ class UTPAssistantManager:
             f"📅 **Reunión Agendada:** Martes a las 10:00 AM UTC (45 min) con estado **tentative**.\n"
             f"🔗 **Google Meet Mock:** [{meet_link}]({meet_link})\n"
             f"💼 **CRM Actualizado:** Prospecto en etapa **'Reunión Técnica'**.\n\n"
-            f"El evento de calendario y el ticket se encuentran listos para revisión y confirmación en el panel HITL."
+            f"El evento de calendario y el ticket se encuentran listos para revisión y confirmación en el panel de aprobación."
         )
 
         return {
