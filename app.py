@@ -34,7 +34,7 @@ st.set_page_config(
 )
 
 # ==========================================
-# ESTILOS CSS MODERNOS
+# ESTILOS CSS
 # ==========================================
 st.markdown("""
 <style>
@@ -114,7 +114,7 @@ if "pm_aprobado_jira" not in st.session_state:
 # CASOS DE CORREO PREDEFINIDOS
 # ==========================================
 CORREOS_PREDEFINIDOS = {
-    "⭐ Caso 1: Ana Torres (TechCorp — Módulo de Pagos)": {
+    "Caso 1: Ana Torres (TechCorp — Módulo de Pagos)": {
         "remitente": "ana.torres@techcorp.com",
         "asunto": "Solicitud de Reunión Técnica y Requisitos para Módulo de Pagos",
         "archivo": "Especificaciones_Modulo_Pagos_v1.pdf",
@@ -131,7 +131,7 @@ CORREOS_PREDEFINIDOS = {
             "TechCorp Enterprise Solutions"
         )
     },
-    "💼 Caso 2: Carlos Vega (RetailPro — Migración Cloud & DB)": {
+    "Caso 2: Carlos Vega (RetailPro — Migración Cloud & DB)": {
         "remitente": "carlos.vega@retailpro.pe",
         "asunto": "Requerimiento de Modernización de Infraestructura Cloud",
         "archivo": "Diagrama_AWS_Actual.png",
@@ -145,7 +145,7 @@ CORREOS_PREDEFINIDOS = {
             "Carlos Vega — CTO RetailPro"
         )
     },
-    "🚨 Caso 3: Lucía Morales (FintechBank — Incidencia Crítica Webhooks)": {
+    "Caso 3: Lucía Morales (FintechBank — Incidencia Crítica Webhooks)": {
         "remitente": "lmorales@fintechbank.io",
         "asunto": "URGENTE: Incompatibilidad de Webhooks en Pasarela",
         "archivo": "error_logs_500.txt",
@@ -166,7 +166,7 @@ CORREOS_PREDEFINIDOS = {
 # ==========================================
 st.markdown("""
 <div class="main-header">
-    <div class="main-title">🤖 UTP Assistant</div>
+    <div class="main-title">UTP Assistant</div>
     <p class="subtitle">Asistente inteligente de correos</p>
 </div>
 """, unsafe_allow_html=True)
@@ -179,7 +179,7 @@ col_izq, col_der = st.columns([1, 1], gap="large")
 
 # --- BANDEJA DE CORREOS ---
 with col_izq:
-    st.markdown("#### 📥 Bandeja de Entrada Corporativa")
+    st.markdown("#### Bandeja de Entrada Corporativa")
     st.caption("Selecciona un correo empresarial de prueba o redacta una solicitud técnica.")
 
     opcion_correo = st.selectbox(
@@ -190,19 +190,19 @@ with col_izq:
     datos_correo = CORREOS_PREDEFINIDOS[opcion_correo]
 
     with st.form("form_procesamiento"):
-        remitente_input = st.text_input("📧 Remitente (Email):", value=datos_correo["remitente"])
-        asunto_input = st.text_input("📌 Asunto:", value=datos_correo["asunto"])
-        archivo_input = st.text_input("📎 Archivo Adjunto Técnico:", value=datos_correo["archivo"])
-        cuerpo_input = st.text_area("📝 Contenido del Correo:", value=datos_correo["cuerpo"], height=190)
+        remitente_input = st.text_input("Remitente (Email):", value=datos_correo["remitente"])
+        asunto_input = st.text_input("Asunto:", value=datos_correo["asunto"])
+        archivo_input = st.text_input("Archivo Adjunto Técnico:", value=datos_correo["archivo"])
+        cuerpo_input = st.text_area("Contenido del Correo:", value=datos_correo["cuerpo"], height=190)
 
         boton_procesar = st.form_submit_button(
-            "⚡ Procesar con UTP Assistant",
+            "Procesar con UTP Assistant",
             use_container_width=True,
             type="primary"
         )
 
     if boton_procesar:
-        with st.spinner("🤖 UTP Assistant procesando correo y ejecutando herramientas..."):
+        with st.spinner("UTP Assistant procesando correo y ejecutando herramientas..."):
             manager = UTPAssistantManager()
             resultado = manager.procesar_correo(
                 remitente=remitente_input,
@@ -218,13 +218,13 @@ with col_izq:
 
 # --- RESULTADOS Y APROBACIÓN ---
 with col_der:
-    st.markdown("#### ⚙️ Resultado del Procesamiento")
+    st.markdown("#### Resultado del Procesamiento")
     resultado = st.session_state.ultimo_resultado
 
     if resultado is None:
         st.info(
-            "👈 Selecciona un caso de correo en la bandeja izquierda y haz clic en "
-            "**'⚡ Procesar con UTP Assistant'** para procesar la solicitud."
+            "Selecciona un caso de correo en la bandeja izquierda y haz clic en "
+            "**'Procesar con UTP Assistant'** para procesar la solicitud."
         )
     else:
         # 1. Herramientas Invocadas (Function Calling)
@@ -237,7 +237,7 @@ with col_der:
                 args = item["arguments"]
                 output = item["output"]
 
-                with st.expander(f"🔧 `{nombre}` — {output.get('status', 'ok').upper()}", expanded=True):
+                with st.expander(f"`{nombre}` — {output.get('status', 'ok').upper()}", expanded=True):
                     col_arg, col_out = st.columns(2)
                     with col_arg:
                         st.markdown("**Argumentos JSON generados:**")
@@ -275,9 +275,9 @@ with col_der:
                 st.caption(f"Horario: {fecha_amigable}")
 
                 if st.session_state.pm_aprobado_calendar:
-                    st.success("✅ Reunión Confirmada por el PM")
+                    st.success("Reunión Confirmada por el PM")
                 else:
-                    if st.button("🤝 Confirmar Reunión en Calendar", key="btn_confirm_cal", use_container_width=True):
+                    if st.button("Confirmar Reunión en Calendar", key="btn_confirm_cal", use_container_width=True):
                         confirmar_reunion_calendar(calendar_info.get("event_id"))
                         st.session_state.pm_aprobado_calendar = True
                         st.toast("Reunión autorizada y confirmada en Calendar", icon="📅")
@@ -285,13 +285,13 @@ with col_der:
 
         with col_hitl_jira:
             if ticket_info:
-                st.markdown(f"**🎫 Ticket:** `{ticket_info.get('ticket_id')}`")
+                st.markdown(f"**Ticket:** `{ticket_info.get('ticket_id')}`")
                 st.caption(f"Tipo: {ticket_info.get('issue_type')} | Prioridad: {ticket_info.get('priority')}")
 
                 if st.session_state.pm_aprobado_jira:
                     st.success("✅ Ticket Aprobado para Sprint Activo")
                 else:
-                    if st.button("🚀 Aprobar Ticket para Sprint", key="btn_approve_jira", use_container_width=True):
+                    if st.button("Aprobar Ticket para Sprint", key="btn_approve_jira", use_container_width=True):
                         aprobar_ticket_jira(ticket_info.get("ticket_id"))
                         st.session_state.pm_aprobado_jira = True
                         st.toast("Ticket aprobado y pasado al sprint activo", icon="🎫")

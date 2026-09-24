@@ -4,7 +4,7 @@ Solución inteligente de automatización de correos electrónicos corporativos u
 
 ---
 
-## 🚀 Características Principales
+## Características Principales
 
 1. **Extracción y Orquestación Inteligente:**
    - Procesa correos entrantes, detecta remitente, asunto, cuerpo y archivos adjuntos técnicos.
@@ -20,7 +20,7 @@ Solución inteligente de automatización de correos electrónicos corporativos u
 
 ---
 
-## 📁 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 tarea academica 2/
@@ -37,7 +37,7 @@ tarea academica 2/
 
 ---
 
-## 🛠️ Instalación y Configuración
+## Instalación y Configuración
 
 ### 1. Clonar o navegar al directorio del proyecto:
 ```bash
@@ -66,11 +66,11 @@ JIRA_PROJECT_KEY=PAYMOD
 GOOGLE_CALENDAR_ID=primary
 GOOGLE_SERVICE_ACCOUNT_FILE=service_account.json
 ```
-*(Para instrucciones detalladas de cómo generar cada una, consulta [`GUIA_CREDENCIALES_Y_APIS.md`](./GUIA_CREDENCIALES_Y_APIS.md) o la pestaña **📖 Guía de Credenciales** dentro de la app).*
+*(Para instrucciones detalladas de cómo generar cada una, consulta [`GUIA_CREDENCIALES_Y_APIS.md`](./GUIA_CREDENCIALES_Y_APIS.md) o la pestaña ** Guía de Credenciales** dentro de la app).*
 
 ---
 
-## 🖥️ Ejecución de la Aplicación
+## Ejecución de la Aplicación
 
 Ejecuta Streamlit con el intérprete de Python:
 ```bash
@@ -81,7 +81,7 @@ La interfaz se abrirá en tu navegador en `http://localhost:8501`.
 
 ---
 
-## 🧠 Arquitectura del Prompt del Sistema (SYSTEM_PROMPT)
+## Arquitectura del Prompt del Sistema (SYSTEM_PROMPT)
 
 El prompt del Asistente en [`assistant_core.py`](./assistant_core.py) cuenta con los 6 componentes requeridos:
 1. **Rol:** Copiloto Senior de Project Management & Sales Ops en UTPConsult.
@@ -93,14 +93,14 @@ El prompt del Asistente en [`assistant_core.py`](./assistant_core.py) cuenta con
 
 ---
 
-## 🧪 Caso de Prueba Oficial (Verificación)
+## Caso de Prueba Oficial (Verificación)
 
 1. En la columna izquierda, selecciona el correo:
-   **⭐ Caso 1 (Oficial): Ana Torres (TechCorp — Módulo de Pagos)**
-2. Haz clic en **"⚡ Procesar con UTP Assistant"**.
+   **Caso 1 (Oficial): Ana Torres (TechCorp — Módulo de Pagos)**
+2. Haz clic en **"Procesar con UTP Assistant"**.
 3. Observa en la columna derecha:
    - Los estados del Run: `queued` ➔ `in_progress` ➔ `requires_action` ➔ `completed`.
    - Las 3 herramientas detectadas e invocadas con sus argumentos JSON y tipo de conexión (Real o Simulación Fallback).
-   - La tarjeta **HITL**: Haz clic en **"🤝 Confirmar Reunión en Calendar"** y **"🚀 Aprobar Ticket para Sprint"**.
+   - La tarjeta **HITL**: Haz clic en **"Confirmar Reunión en Calendar"** y **"Aprobar Ticket para Sprint"**.
    - La notificación ejecutiva final generada para el equipo interno.
 4. En la barra lateral izquierda, observa cómo se actualizan en vivo los contadores y registros de **Jira**, **Calendar** y **CRM**.

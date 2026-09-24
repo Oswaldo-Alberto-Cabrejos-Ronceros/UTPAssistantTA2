@@ -356,9 +356,9 @@ def ejecutar_agendar_google_calendar(
             meet_fallback_url = f"https://meet.google.com/utp-{uuid.uuid4().hex[:3]}-{uuid.uuid4().hex[:4]}"
 
             descripcion_completa = (
-                f"👥 Participantes Convocados:\n{participantes_texto}\n\n"
-                f"📋 Agenda de la Sesión:\n{agenda}\n\n"
-                f"🤖 Agendado automáticamente por UTP Assistant (HITL)."
+                f"Participantes Convocados:\n{participantes_texto}\n\n"
+                f"Agenda de la Sesión:\n{agenda}\n\n"
+                f"Agendado automáticamente por UTP Assistant (HITL)."
             )
 
             # Nota: Las Service Accounts estándar en cuentas @gmail.com no pueden invitar 'attendees'

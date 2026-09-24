@@ -85,9 +85,9 @@ Como PM & Sales Ops Copilot, eres el núcleo operativo que procesa correos entra
   * Encabezado y saludo corporativo formal.
   * Resumen del requerimiento del cliente y análisis de impacto técnico.
   * Resumen de acciones operativas ejecutadas con viñetas:
-    - 📌 Ticket Jira: Clave/ID, Tipo, Prioridad y Estado.
-    - 📅 Google Calendar: Fecha y hora programada, duración (45 min), estado (tentativo) y enlace de Google Meet.
-    - 💼 CRM Corporativo: Contacto, Empresa y Etapa de Pipeline.
+    - Ticket Jira: Clave/ID, Tipo, Prioridad y Estado.
+    - Google Calendar: Fecha y hora programada, duración (45 min), estado (tentativo) y enlace de Google Meet.
+    - CRM Corporativo: Contacto, Empresa y Etapa de Pipeline.
   * Nota de Human-in-the-Loop (HITL) recordando la revisión y aprobación requerida por el Project Manager.
 
 ### 5. EJEMPLOS (FEW-SHOT)
@@ -165,9 +165,9 @@ class UTPAssistantManager:
                 return False
         else:
             if self.api_key and not self.api_key.startswith("AIzaSy"):
-                logger.warning("La clave en GEMINI_API_KEY no parece ser de Google AI Studio (debe iniciar con 'AIzaSy'). Modo simulación activado.")
+                logger.warning("La clave en GEMINI_API_KEY no parece ser de Google AI Studio")
             else:
-                logger.info("GEMINI_API_KEY no configurada en .env. Modo simulación activado.")
+                logger.info("GEMINI_API_KEY no configurada en .env")
             self.client_configured = False
             return False
 
@@ -431,10 +431,10 @@ class UTPAssistantManager:
         mensaje_ejecutivo = (
             f"Estimado equipo de UTPConsult,\n\n"
             f"He procesado exitosamente el requerimiento recibido de **{full_name}** ({company_name}).\n\n"
-            f"📌 **Ticket Jira Generado:** `{ticket_id}` (Prioridad: Alta, Tipo: Story).\n"
-            f"📅 **Reunión Agendada:** Martes a las 10:00 AM UTC (45 min) con estado **tentative**.\n"
-            f"🔗 **Google Meet Mock:** [{meet_link}]({meet_link})\n"
-            f"💼 **CRM Actualizado:** Prospecto en etapa **'Reunión Técnica'**.\n\n"
+            f"**Ticket Jira Generado:** `{ticket_id}` (Prioridad: Alta, Tipo: Story).\n"
+            f"**Reunión Agendada:** Martes a las 10:00 AM UTC (45 min) con estado **tentative**.\n"
+            f"**Google Meet Mock:** [{meet_link}]({meet_link})\n"
+            f"**CRM Actualizado:** Prospecto en etapa **'Reunión Técnica'**.\n\n"
             f"El evento de calendario y el ticket se encuentran listos para revisión y confirmación en el panel de aprobación."
         )
 
